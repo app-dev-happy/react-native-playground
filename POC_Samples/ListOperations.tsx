@@ -1,10 +1,11 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable eol-last */
 /* eslint-disable no-trailing-spaces */
 /* eslint-disable keyword-spacing */
 /* eslint-disable prettier/prettier */
  
 import React, { useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import Picker from 'react-native-picker-select';
 
 interface NomineeDetails {
@@ -36,10 +37,14 @@ const Demo_ListOperations = ({ navigation }) => {
 export default Demo_ListOperations;
 
 const NomineeDetails = ({navigation}) => {
+
+    //variables
     const [nomineeList, setNomineeList] = useState([initialData]);
     const itemsCount = nomineeList.length;
     const [highlightError, setHighlightError] = useState(false);
     const [showShareError, setShowShareError] = useState(false);
+
+    //functions
     const addNewNominee = () => {
         const newNomineeItem : NomineeDetails = {
             id: nomineeList.length,
@@ -65,6 +70,11 @@ const NomineeDetails = ({navigation}) => {
     const navigateScreenTo = () => {
         const isAnyFieldEmpty = nomineeList.some( item => item.firstName.trim() === '' || item.lastName.trim() === '' || item.age.trim() === '' || item.gender.trim() === '');
         const totalShare = nomineeList.reduce((acc, item) => acc + Number(item.share), 0 );
+        if(totalShare !== 100){
+            setShowShareError(true);
+        } else {
+            setShowShareError(false);
+        }
         if(isAnyFieldEmpty || totalShare !== 100){
             setHighlightError(true);
         } else {
@@ -73,6 +83,7 @@ const NomineeDetails = ({navigation}) => {
         }
     };
 
+    //views
     return(
         <ScrollView>
             {
@@ -84,6 +95,7 @@ const NomineeDetails = ({navigation}) => {
                         </View>
                         <Text>First name = {nominee.firstName}</Text>
                         <TextInput 
+                            returnKeyType="next"
                             placeholder="Enter first name" 
                             style = {nominee.firstName.trim() === '' && highlightError ? styles.inputError : styles.input}
                             onChangeText={(value) => 
@@ -93,6 +105,7 @@ const NomineeDetails = ({navigation}) => {
                             }/>
                         <Text>Last name = {nominee.lastName}</Text>
                         <TextInput 
+                            returnKeyType="next"
                             placeholder="Enter last name" 
                             style = {nominee.lastName.trim() === '' && highlightError ? styles.inputError : styles.input} 
                             onChangeText={(value) => 
@@ -102,6 +115,7 @@ const NomineeDetails = ({navigation}) => {
                             }/>
                         <Text>Age = {nominee.age}</Text>
                         <TextInput 
+                            returnKeyType="next"
                             placeholder="Enter age" 
                             style = {nominee.age.trim() === '' && highlightError ? styles.inputError : styles.input}
                             onChangeText={(value) => 
@@ -119,13 +133,15 @@ const NomineeDetails = ({navigation}) => {
                         <Text>Share = {nominee.share}</Text>
                         <TextInput 
                             placeholder="Enter share (%)" 
-                            style = {highlightError ? styles.inputError : styles.input}
+                            style = {highlightError && showShareError ? styles.inputError : styles.input}
                             onChangeText={(value) => 
                                 {
                                     handleChanges(index, 'share', value);
                                 }
                             } 
-                            keyboardType="numeric"/>
+                            keyboardType="numeric"
+                            returnKeyType="next"
+                            />
                     </View>
                 ))
             }
